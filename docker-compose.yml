@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  database:
+    image: mysql:8
+    container_name: caules_db
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - .env
