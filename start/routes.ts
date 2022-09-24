@@ -22,7 +22,7 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
   Route.get('/', 'HomeController.index').as('home')
-  Route.post('/login', 'UsersController.login').as('login')
+  Route.post('/login', 'AuthController.login').as('login')
   Route.group(() => {
     Route.resource('/caules', 'CaulesController').as('caules').apiOnly()
     Route.resource('/users', 'UsersController').as('users').apiOnly()
