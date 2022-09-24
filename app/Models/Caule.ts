@@ -15,6 +15,10 @@ export default class Caule extends BaseModel {
   @column()
   public userId: number
 
+  // TODO
+  // @column()
+  // public approved: boolean
+
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
 
