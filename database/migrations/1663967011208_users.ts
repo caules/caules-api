@@ -10,7 +10,6 @@ export default class UsersSchema extends BaseSchema {
       table.string('username', 255).notNullable().unique()
       table.string('avatar').nullable().defaultTo(null)
       table.string('password', 180).notNullable()
-      table.string('remember_me_token').nullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').notNullable()
     })

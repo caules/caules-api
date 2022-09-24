@@ -7,7 +7,7 @@ export default class AuthController {
 
     try {
       return await auth.use('api').attempt(payload.email, payload.password, {
-        expiresIn: '30 days',
+        expiresIn: '1 year',
       })
     } catch (e) {
       return response.unauthorized({
