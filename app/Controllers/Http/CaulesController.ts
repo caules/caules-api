@@ -5,14 +5,14 @@ import CauleCreateValidator from 'App/Validators/CauleCreateValidator'
 
 export default class CaulesController {
   public async index({ response }) {
-    const caules = await Caule.all()
+    const caules = await Caule.query().preload('user')
 
     return response.send(caules)
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
     const payload = await request.validate(CauleCreateValidator)
-    const caule: Caule = await Caule.create({ ...payload, user_id: auth.user?.id })
+    const caule: Caule = await Caule.create({ ...payload, userId: auth.user?.id })
 
     return response.created({ caule })
   }

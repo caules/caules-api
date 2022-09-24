@@ -13,7 +13,7 @@ export default class Caule extends BaseModel {
   public body: string
 
   @column()
-  public user_id: number
+  public userId: number
 
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
