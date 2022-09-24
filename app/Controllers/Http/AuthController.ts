@@ -6,7 +6,19 @@ export default class AuthController {
     const payload = await request.validate(UserLoginValidator)
 
     try {
-      return await auth.use('api').attempt(payload.email, payload.password)
+      return await auth.use('api').attempt(payload.email, payload.password, {
+        expiresIn: '30 days',
+      })
+    } catch (e) {
+      return response.unauthorized({
+        errors: [{ message: e.responseText }],
+      })
+    }
+  }
+
+  public async logout({ response, auth }: HttpContextContract) {
+    try {
+      return await auth.use('api').revoke()
     } catch (e) {
       return response.unauthorized({
         errors: [{ message: e.responseText }],
