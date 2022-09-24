@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import Caule from 'App/Models/Caule'
 import CauleCreateValidator from 'App/Validators/CauleCreateValidator'
-import CauleEditValidator from 'App/Validators/CauleEditValidator'
+import CauleUpdateValidator from 'App/Validators/CauleUpdateValidator'
 
 export default class CaulesController {
   public async index({ response }) {
@@ -19,7 +19,7 @@ export default class CaulesController {
   }
 
   public async update({ request, response, params, auth }: HttpContextContract) {
-    const payload = await request.validate(CauleEditValidator)
+    const payload = await request.validate(CauleUpdateValidator)
     const caule = await Caule.findOrFail(params.id)
 
     if (!this.isUserCauleOwner(caule.id, auth.user?.id)) {
@@ -31,9 +31,15 @@ export default class CaulesController {
     caule.title = payload.title
     caule.body = payload.body
 
-    caule.save()
+    try {
+      await caule.save()
+    } catch (e) {
+      return response.unprocessableEntity({
+        errors: [{ message: e.responseText }],
+      })
+    }
 
-    return response.created({ caule })
+    return response.ok({ caule })
   }
 
   public async destroy({ response, params, auth }: HttpContextContract) {
@@ -45,12 +51,18 @@ export default class CaulesController {
       })
     }
 
-    caule.delete()
+    try {
+      await caule.delete()
+    } catch (e) {
+      return response.unprocessableEntity({
+        errors: [{ message: e.responseText }],
+      })
+    }
 
     return response.accepted({ caule })
   }
 
-  public isUserCauleOwner(cauleId: number, userId?: number) {
+  public isUserCauleOwner(cauleId: number, userId?: number): boolean {
     if (userId && cauleId) {
       return userId === cauleId
     }

@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import User from 'App/Models/User'
 import UserCreateValidator from 'App/Validators/UserCreateValidator'
+import UserUpdateValidator from 'App/Validators/UserUpdateValidator'
 
 export default class UsersController {
   public async store({ request, response }: HttpContextContract) {
@@ -13,8 +14,35 @@ export default class UsersController {
     user.avatar = payload.avatar ?? null
     user.password = payload.password
 
-    await user.save()
+    try {
+      await user.save()
+    } catch (e) {
+      return response.badRequest({
+        errors: [{ message: e.responseText }],
+      })
+    }
 
     return response.created({ user })
+  }
+
+  public async update({ request, response, auth }: HttpContextContract) {
+    const payload = await request.validate(UserUpdateValidator)
+    const authUser = await auth.use('api').authenticate()
+    const user: User = await User.findByOrFail('id', authUser.id)
+
+    payload.email ? (user.email = payload.email) : null
+    payload.username ? (user.username = payload.username) : null
+    payload.password ? (user.password = payload.password) : null
+    payload.avatar ? (user.avatar = payload.avatar) : null
+
+    try {
+      await user.save()
+    } catch (e) {
+      return response.unprocessableEntity({
+        errors: [{ message: e.responseText }],
+      })
+    }
+
+    return response.ok({ user })
   }
 }
